@@ -1,0 +1,86 @@
+:root{
+  --sr-red:#b91c1c;      /* red-700 */
+  --sr-red2:#ef4444;     /* red-500 */
+  --sr-white:#ffffff;
+  --sr-bg:#fff5f5;       /* suave */
+  --sr-ink:#0f172a;      /* slate-900 */
+}
+
+body{
+  background: radial-gradient(1200px 600px at 10% 0%, rgba(239,68,68,.14), transparent 60%),
+              radial-gradient(900px 500px at 80% 10%, rgba(185,28,28,.12), transparent 60%),
+              var(--sr-bg);
+}
+
+/* Micro-interacciones */
+.glass{
+  background: rgba(255,255,255,.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(185,28,28,.12);
+  box-shadow: 0 10px 30px rgba(15,23,42,.08);
+}
+.card-tilt{
+  transform-style: preserve-3d;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.card-tilt:hover{
+  transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
+  box-shadow: 0 18px 40px rgba(15,23,42,.12);
+}
+.shine{
+  position: relative;
+  overflow: hidden;
+}
+.shine::after{
+  content:"";
+  position:absolute; inset:-40% -60%;
+  background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%);
+  transform: translateX(-60%) rotate(10deg);
+  animation: shine 6s infinite ease-in-out;
+  pointer-events:none;
+}
+@keyframes shine{
+  0%,20%{ transform: translateX(-60%) rotate(10deg); opacity:.0; }
+  30%{ opacity:.9; }
+  60%{ transform: translateX(60%) rotate(10deg); opacity:.2; }
+  100%{ transform: translateX(60%) rotate(10deg); opacity:0; }
+}
+
+/* Drawer carrito */
+.drawer{
+  position: fixed; top:0; right:-420px; width: 420px; max-width: 92vw; height: 100vh;
+  transition:right .25s ease;
+  z-index: 80;
+}
+.drawer.open{ right:0; }
+.backdrop{
+  position: fixed; inset:0;
+  background: rgba(2,6,23,.45);
+  opacity:0; pointer-events:none;
+  transition:opacity .2s ease;
+  z-index: 70;
+}
+.backdrop.show{ opacity:1; pointer-events:auto; }
+
+/* Sidebar admin */
+.admin-shell{ min-height: calc(100vh - 72px); }
+.sidebar{
+  width: 280px; min-width: 280px;
+  position: sticky; top: 72px; height: calc(100vh - 72px);
+}
+
+/* Toast */
+.toast{
+  position: fixed; bottom: 18px; left: 18px;
+  z-index: 120;
+}
+
+/* Pequeño “sparkle” */
+.sparkle{
+  display:inline-block;
+  animation: floaty 2.3s infinite ease-in-out;
+}
+@keyframes floaty{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(-6px); }
+}
