@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAN RAMON | Bodega</title>
+
+  <!-- Tailwind (CDN para simplificar el deploy) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body class="text-slate-900">
+  <!-- Topbar -->
+  <header class="sticky top-0 z-50">
+    <nav class="glass mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center justify-between rounded-b-2xl">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-2xl bg-red-700 grid place-items-center text-white shadow-lg">
+          <i class="fa-solid fa-wine-bottle"></i>
+        </div>
+        <div>
+          <div class="font-black tracking-wide text-lg leading-none">
+            <span class="text-red-700">SAN</span> RAMON
+          </div>
+          <div class="text-xs text-slate-600 -mt-0.5">Bodega • Promos • Delivery</div>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center gap-2">
+        <a href="#home" class="px-3 py-2 rounded-xl hover:bg-red-50 text-sm font-semibold">Inicio</a>
+        <a href="#productos" class="px-3 py-2 rounded-xl hover:bg-red-50 text-sm font-semibold">Productos</a>
+        <a href="#promos" class="px-3 py-2 rounded-xl hover:bg-red-50 text-sm font-semibold">Promos</a>
+        <a href="#admin" class="px-3 py-2 rounded-xl hover:bg-red-50 text-sm font-semibold">Admin</a>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="btnCart" class="shine px-3 py-2 rounded-xl bg-red-700 text-white font-semibold flex items-center gap-2 shadow-lg">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>Carrito</span>
+          <span id="cartCount" class="ml-1 text-xs bg-white/20 px-2 py-0.5 rounded-full">0</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <!-- ROUTES -->
+    <section id="routeHome"></section>
+    <section id="routeAdmin" class="hidden"></section>
+  </main>
+
+  <!-- Backdrop + Drawer -->
+  <div id="backdrop" class="backdrop"></div>
+
+  <aside id="drawer" class="drawer glass p-4">
+    <div class="flex items-center justify-between">
+      <div class="font-black text-lg">Tu carrito</div>
+      <button id="btnCloseCart" class="h-10 w-10 rounded-xl hover:bg-red-50 grid place-items-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="mt-3 text-sm text-slate-600">
+      Ajusta cantidades, revisa el total y confirma tu pedido.
+    </div>
+
+    <div id="cartItems" class="mt-4 space-y-3"></div>
+
+    <div class="mt-4 p-3 rounded-2xl bg-red-50 border border-red-100">
+      <div class="flex items-center justify-between text-sm">
+        <span>Subtotal</span>
+        <span id="cartSubtotal" class="font-bold">₲ 0</span>
+      </div>
+      <div class="flex items-center justify-between text-sm mt-1">
+        <span>Descuentos</span>
+        <span id="cartDiscount" class="font-bold text-red-700">- ₲ 0</span>
+      </div>
+      <div class="h-px bg-red-100 my-2"></div>
+      <div class="flex items-center justify-between">
+        <span class="font-black">Total</span>
+        <span id="cartTotal" class="font-black text-xl text-red-700">₲ 0</span>
+      </div>
+    </div>
+
+    <button id="btnCheckout" class="mt-4 w-full py-3 rounded-2xl bg-red-700 text-white font-black shadow-lg hover:brightness-110 transition">
+      Confirmar pedido
+    </button>
+
+    <div class="mt-3 text-xs text-slate-500">
+      Al confirmar, te pediremos medio de pago, teléfono y ubicación exacta.
+    </div>
+  </aside>
+
+  <!-- Modal Checkout -->
+  <div id="checkoutModal" class="hidden fixed inset-0 z-[90]">
+    <div class="absolute inset-0 bg-slate-950/50"></div>
+    <div class="relative max-w-xl mx-auto mt-10 p-4">
+      <div class="glass rounded-3xl p-5">
+        <div class="flex items-center justify-between">
+          <div class="font-black text-xl">Confirmar pedido</div>
+          <button id="btnCloseCheckout" class="h-10 w-10 rounded-xl hover:bg-red-50 grid place-items-center">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="mt-2 text-sm text-slate-600">
+          Completa estos datos para que el delivery te contacte.
+        </div>
+
+        <div class="mt-4 grid sm:grid-cols-2 gap-3">
+          <div class="sm:col-span-2">
+            <label class="text-xs font-bold text-slate-600">Teléfono (Paraguay)</label>
+            <input id="inpPhone" placeholder="Ej: 0984117765" class="mt-1 w-full px-4 py-3 rounded-2xl border border-red-100 focus:outline-none focus:ring-2 focus:ring-red-200"/>
+            <div id="phoneHint" class="text-xs text-slate-500 mt-1">Se convertirá automáticamente a formato 595…</div>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="text-xs font-bold text-slate-600">Medio de pago</label>
+            <select id="selPay" class="mt-1 w-full px-4 py-3 rounded-2xl border border-red-100 focus:outline-none focus:ring-2 focus:ring-red-200">
+              <option value="Efectivo">Efectivo</option>
+              <option value="Transferencia">Transferencia</option>
+              <option value="Tarjeta">Tarjeta</option>
+              <option value="Billetera">Billetera (Tigo Money / Personal Pay / etc.)</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="text-xs font-bold text-slate-600">Ubicación exacta</label>
+            <div class="flex gap-2 mt-1">
+              <button id="btnGeo" class="flex-1 py-3 rounded-2xl bg-red-700 text-white font-bold hover:brightness-110 transition">
+                <i class="fa-solid fa-location-crosshairs mr-2"></i>Usar mi ubicación
+              </button>
+              <button id="btnClearGeo" class="px-4 py-3 rounded-2xl border border-red-200 hover:bg-red-50 font-bold">
+                Limpiar
+              </button>
+            </div>
+            <input id="inpAddress" placeholder="Opcional: referencia / barrio / calle" class="mt-2 w-full px-4 py-3 rounded-2xl border border-red-100 focus:outline-none focus:ring-2 focus:ring-red-200"/>
+            <div id="geoStatus" class="text-xs text-slate-500 mt-1">Aún sin coordenadas.</div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-3 rounded-2xl bg-red-50 border border-red-100">
+          <div class="flex items-center justify-between">
+            <span class="font-bold">Total a pagar</span>
+            <span id="checkoutTotal" class="font-black text-xl text-red-700">₲ 0</span>
+          </div>
+          <div class="text-xs text-slate-600 mt-1">
+            Enviaremos tu pedido por WhatsApp a SAN RAMON para confirmar el delivery.
+          </div>
+        </div>
+
+        <button id="btnSendOrder" class="mt-4 w-full py-3 rounded-2xl bg-slate-900 text-white font-black hover:brightness-110 transition">
+          <i class="fa-brands fa-whatsapp mr-2"></i>Enviar pedido por WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast space-y-2" id="toastZone"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
